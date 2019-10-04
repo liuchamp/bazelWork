@@ -1,18 +1,14 @@
 package(default_visibility = ["//visibility:public"])
 
-load("@org_pubref_rules_protobuf//go:rules.bzl", "go_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
 
-filegroup(
-    name = "protos",
-    srcs = [
-        "greetertimer.proto",
-    ],
+proto_library(
+    name = "thing_proto",
+    srcs = ["greetertimer.proto"],
+    deps = ["@com_google_protobuf//:any_proto"],
 )
 
-go_proto_library(
-    name = "go_default_library",
-    protos = [
-        ":protos",
-    ],
-    with_grpc = True,
+cc_proto_library(
+    name = "thing_cc_proto",
+    deps = [":thing_proto"],
 )
