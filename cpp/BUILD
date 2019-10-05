@@ -1,6 +1,14 @@
 cc_binary(
-    name = "first",
-    srcs = ["first.cc"],
-    linkstatic = 1,  # default value
-    deps = ["//proto:/thing_cc_proto"],
+    name = "route_guide_server",
+    srcs = [
+        "helper.cc",
+        "helper.h",
+        "server.cc",
+    ],
+    data = ["route_guide_db.json"],
+    defines = ["BAZEL_BUILD"],
+    deps = [
+        "//:grpc++",
+        "//proto:thing_proto",
+    ],
 )

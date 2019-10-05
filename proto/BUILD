@@ -1,12 +1,25 @@
 package(default_visibility = ["//visibility:public"])
 
+#load("@com_github_grpc_grpc//bazel:grpc_build_system.bzl", "grpc_proto_library")
+load("@com_github_grpc_grpc//bazel:cc_grpc_library.bzl", "cc_grpc_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
+
+# grpc_proto_library(
+#     name = "thing_proto",
+#     srcs = [
+#         "greetertimer.proto",
+#         "helloworld.proto",
+#         "route_guide.proto",
+#     ],
+#     deps = ["@com_google_protobuf//:any_proto"],
+# )
 
 proto_library(
     name = "thing_proto",
     srcs = [
         "greetertimer.proto",
         "helloworld.proto",
+        "route_guide.proto",
     ],
     deps = ["@com_google_protobuf//:any_proto"],
 )
@@ -14,4 +27,11 @@ proto_library(
 cc_proto_library(
     name = "thing_cc_proto",
     deps = [":thing_proto"],
+)
+
+cc_grpc_library(
+    name = "thing_cc_grpc",
+    srcs = [":thing_proto"],
+    grpc_only = True,
+    deps = [":thing_cc_proto"],
 )

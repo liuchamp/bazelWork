@@ -18,3 +18,52 @@ load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_
 rules_proto_dependencies()
 
 rules_proto_toolchains()
+
+http_archive(
+    name = "com_github_grpc_grpc",
+    strip_prefix = "grpc-1.24.1",
+    urls = [
+        "https://github.com/grpc/grpc/archive/v1.24.1.zip",
+    ],
+)
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps", "grpc_test_only_deps")
+
+grpc_deps()
+
+grpc_test_only_deps()
+
+register_execution_platforms(
+    "//third_party/toolchains:local",
+    "//third_party/toolchains:local_large",
+    "//third_party/toolchains:rbe_windows",
+)
+
+register_toolchains(
+    "//third_party/toolchains/bazel_0.26.0_rbe_windows:cc-toolchain-x64_windows",
+)
+
+load("@bazel_toolchains//rules:rbe_repo.bzl", "rbe_autoconfig")
+
+# Create toolchain configuration for remote execution.
+rbe_autoconfig(
+    name = "rbe_default",
+)
+
+load("@bazel_toolchains//rules:environments.bzl", "clang_env")
+load("@bazel_skylib//lib:dicts.bzl", "dicts")
+
+# Create msan toolchain configuration for remote execution.
+rbe_autoconfig(
+    name = "rbe_msan",
+    env = dicts.add(
+        clang_env(),
+        {
+            "BAZEL_LINKOPTS": "-lc++:-lc++abi:-lm",
+        },
+    ),
+)
+
+load("@upb//bazel:workspace_deps.bzl", "upb_deps")
+
+upb_deps()
